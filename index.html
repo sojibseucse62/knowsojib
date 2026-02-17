@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sojib | Automation Expert Portfolio</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class', // Enables class-based dark mode
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        dark: {
+                            bg: '#111111',
+                            card: '#1a1a1a',
+                            input: '#222222'
+                        },
+                        brand: {
+                            blue: '#3b82f6',
+                            hover: '#2563eb'
+                        }
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(59, 130, 246, 0.15)',
+                    },
+                    animation: {
+                        'message-pop': 'messagePop 0.3s ease-out forwards',
+                    },
+                    keyframes: {
+                        messagePop: {
+                            '0%': { opacity: '0', transform: 'scale(0.9) translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #111111;
+            color: white;
+        }
+
+        /* Speech Bubble Tails */
+        .speech-bubble-right::after {
+            content: '';
+            position: absolute;
+            right: -10px;
+            bottom: 12px;
+            border-width: 10px 0 0 12px;
+            border-style: solid;
+            border-color: transparent transparent transparent #3b82f6;
+        }
+        
+        /* Chat Bubble Tail (Left) */
+        .chat-bubble-left::after {
+            content: '';
+            position: absolute;
+            left: -8px;
+            bottom: 12px;
+            border-width: 10px 12px 0 0;
+            border-style: solid;
+            border-color: transparent #3b82f6 transparent transparent; /* Match brand-blue for user or gray for bot */
+        }
+
+        .chat-bubble-bot::after {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 12px;
+            border-width: 0 12px 10px 0;
+            border-style: solid;
+            border-color: transparent #374151 transparent transparent; /* Dark mode tail color */
+        }
+
+        /* Blob Animation */
+        .blob-bg {
+            position: absolute;
+            z-index: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -40%);
+            width: 350px;
+            height: 400px;
+            border-radius: 44% 56% 39% 61% / 64% 49% 51% 36%;
+            animation: blob-bounce 8s infinite ease-in-out alternate;
+        }
+        
+        /* Responsive Blob for Mobile */
+        @media (max-width: 768px) {
+            .blob-bg {
+                width: 280px;
+                height: 320px;
+            }
+        }
+
+        @keyframes blob-bounce {
+            0% { border-radius: 44% 56% 39% 61% / 64% 49% 51% 36%; }
+            100% { border-radius: 56% 44% 61% 39% / 49% 64% 36% 51%; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+        
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Typing Indicator */
+        .typing-dot {
+            animation: typing 1.4s infinite ease-in-out both;
+        }
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center relative selection:bg-brand-blue selection:text-white bg-[#111111] text-white">
+
+    <!-- Navbar / Top Controls -->
+    <nav class="w-full max-w-7xl px-6 py-6 flex justify-between items-start absolute top-0 z-50">
+        <div class="w-10"></div>
+        
+        <div class="relative group cursor-pointer">
+            <div class="bg-[#1f2937] px-4 py-1.5 rounded-full border border-gray-700 flex items-center gap-2 transition-transform transform group-hover:-translate-y-1 shadow-none">
+                <div class="w-2 h-2 bg-brand-blue rounded-full animate-pulse"></div>
+                <span class="text-sm font-medium text-gray-300">Hello!</span>
+            </div>
+            <div class="absolute left-1/2 -translate-x-1/2 bottom-[-5px] w-3 h-3 bg-[#1f2937] border-r border-b border-gray-700 transform rotate-45"></div>
+        </div>
+
+        <!-- Theme button removed -->
+        <div class="w-10"></div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <!-- Increased bottom padding (pb-80) on mobile to prevent content from hiding behind the fixed bottom bar -->
+    <main class="flex-grow w-full max-w-6xl px-4 flex flex-col justify-center items-center relative z-10 pt-20 pb-80 md:pb-40">
+        
+        <!-- Headlines -->
+        <div class="text-center mb-3 fade-in-up" style="animation-delay: 0.1s;">
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-2 text-white">
+                I'm <span class="text-brand-blue">Sojib</span>,
+            </h1>
+            <h2 class="text-4xl md:text-6xl font-bold tracking-tight text-white">
+                Automation Expert
+            </h2>
+        </div>
+
+        <!-- Central Grid Layout -->
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 w-full items-center">
+            
+            <!-- Left Column: Testimonial -->
+            <div class="md:col-span-3 order-2 md:order-1 flex flex-col justify-center fade-in-up px-4 md:px-0" style="animation-delay: 0.3s;">
+                <div class="relative md:text-right">
+                    <i class="fa-solid fa-quote-left text-4xl text-brand-blue mb-4 block md:hidden"></i>
+                    <i class="fa-solid fa-quote-right text-4xl text-brand-blue mb-4 hidden md:inline-block"></i>
+                    
+                    <p class="text-gray-400 italic text-sm md:text-base leading-relaxed mb-4">
+                        Sojib is the secret weapon for any modern SaaS, he transformed our complex ideas into a high performance reality.
+                    </p>
+                    
+                    <div class="flex flex-col md:items-end">
+                        <h4 class="text-white font-semibold">Marc Hawkins</h4>
+                        <span class="text-xs text-gray-500 uppercase tracking-wider">Adobe Director</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Column: Image -->
+            <div class="md:col-span-6 order-1 md:order-2 relative h-[400px] md:h-[500px] flex justify-center items-end fade-in-up" style="animation-delay: 0.2s;">
+                <div class="blob-bg"></div>
+                <img src="/assets/sojib-profile.png" 
+                     alt="Sojib" 
+                     class="relative z-10 h-full w-auto object-cover mask-image-b"
+                     style="-webkit-mask-image: linear-gradient(to bottom, black 85%, transparent 100%); mask-image: linear-gradient(to bottom, black 85%, transparent 100%);">
+            </div>
+
+            <!-- Right Column: CTAs -->
+            <div class="md:col-span-3 order-3 md:order-3 flex flex-col md:flex-col gap-6 items-center md:items-start fade-in-up w-full" style="animation-delay: 0.4s;">
+                
+                <!-- Button 1: Triggers Chat -->
+                <button onclick="startAboutChat()" class="relative group">
+                    <div class="bg-brand-blue text-white px-6 py-3 rounded-2xl rounded-tr-sm font-medium flex items-center gap-2 transform transition-all hover:scale-105 shadow-glow speech-bubble-right">
+                        More About Me
+                    </div>
+                </button>
+
+                <!-- Button 2 -->
+                <button onclick="fillCommand('Projects')" class="relative group md:ml-12">
+                    <div class="bg-transparent border border-brand-blue text-brand-blue dark:text-white px-6 py-3 rounded-2xl font-medium flex items-center gap-2 transform transition-all hover:bg-brand-blue/10">
+                        See My Work
+                    </div>
+                </button>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Bottom Interaction Area / Command Palette -->
+    <div class="fixed bottom-0 left-0 w-full p-4 md:pb-8 z-50 flex flex-col items-center">
+        
+        <!-- Glassmorphism Container -->
+        <div class="w-full max-w-3xl bg-[#1a1a1a]/90 backdrop-blur-md border border-white/10 rounded-3xl p-2 md:p-3 shadow-2xl transition-colors fade-in-up" style="animation-delay: 0.5s;">
+            
+            <!-- Input Area -->
+            <form onsubmit="handleCommand(event)" class="relative w-full mb-3">
+                <input type="text" 
+                       id="commandInput"
+                       placeholder="Try about, skills, or projects..." 
+                       class="w-full bg-[#111111] text-white rounded-2xl py-4 pl-6 pr-14 outline-none focus:ring-2 focus:ring-brand-blue/50 transition-all border border-transparent focus:border-brand-blue/30 placeholder-gray-500"
+                       autocomplete="off">
+                <button type="submit" class="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-brand-blue hover:bg-blue-600 rounded-xl flex items-center justify-center text-white transition-colors">
+                    <i class="fa-solid fa-arrow-up"></i>
+                </button>
+            </form>
+
+            <!-- Chips / Quick Actions -->
+            <div class="flex flex-wrap gap-2 md:gap-3 px-2 overflow-x-auto no-scrollbar pb-1">
+                
+                <button onclick="startAboutChat()" class="flex items-center gap-2 bg-[#111111] hover:bg-[#222] border border-white/5 rounded-full px-4 py-2 transition-colors group flex-shrink-0">
+                    <span class="w-2 h-2 rounded-full bg-blue-500 group-hover:shadow-[0_0_8px_rgba(59,130,246,0.8)] transition-shadow"></span>
+                    <span class="text-sm font-medium text-gray-300">About Me</span>
+                </button>
+
+                <button onclick="fillCommand('Skills')" class="flex items-center gap-2 bg-[#111111] hover:bg-[#222] border border-white/5 rounded-full px-4 py-2 transition-colors group flex-shrink-0">
+                    <span class="w-2 h-2 rounded-full bg-green-500 group-hover:shadow-[0_0_8px_rgba(34,197,94,0.8)] transition-shadow"></span>
+                    <span class="text-sm font-medium text-gray-300">Skills</span>
+                </button>
+
+                <button onclick="fillCommand('Projects')" class="flex items-center gap-2 bg-[#111111] hover:bg-[#222] border border-white/5 rounded-full px-4 py-2 transition-colors group flex-shrink-0">
+                    <span class="w-2 h-2 rounded-full bg-orange-500 group-hover:shadow-[0_0_8px_rgba(249,115,22,0.8)] transition-shadow"></span>
+                    <span class="text-sm font-medium text-gray-300">Projects</span>
+                </button>
+
+                <button onclick="fillCommand('Contact')" class="flex items-center gap-2 bg-[#111111] hover:bg-[#222] border border-white/5 rounded-full px-4 py-2 transition-colors group flex-shrink-0">
+                    <span class="w-2 h-2 rounded-full bg-red-500 group-hover:shadow-[0_0_8px_rgba(239,68,68,0.8)] transition-shadow"></span>
+                    <span class="text-sm font-medium text-gray-300">Contact</span>
+                </button>
+
+            </div>
+        </div>
+
+        <!-- Footer Help Text -->
+        <div class="mt-4 text-xs text-gray-500 font-medium tracking-wide block text-center fade-in-up" style="animation-delay: 0.6s;">
+            <i class="fa-regular fa-comment-dots mr-2"></i>
+            You can ask me about : <span class="text-gray-400 hover:text-white cursor-pointer transition-colors">age</span> · 
+            <span class="text-gray-400 hover:text-white cursor-pointer transition-colors">cv</span> · 
+            <span class="text-gray-400 hover:text-white cursor-pointer transition-colors">education</span> · 
+            <span class="text-gray-400 hover:text-white cursor-pointer transition-colors">experience</span> · 
+            <span class="text-gray-400 hover:text-white cursor-pointer transition-colors">awards</span> · 
+            <span class="text-gray-400 hover:text-white cursor-pointer transition-colors">hobbies</span>
+        </div>
+    </div>
+
+    <!-- Chat Modal Overlay -->
+    <div id="chatModal" class="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm hidden flex items-center justify-center p-4 transition-opacity duration-300">
+        <div class="bg-[#1a1a1a] w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden border border-gray-700 flex flex-col h-[600px] transform transition-transform scale-95 opacity-0" id="chatWindow">
+            
+            <!-- Chat Header -->
+            <div class="bg-[#222] p-4 flex justify-between items-center border-b border-gray-700">
+                <div class="flex items-center gap-3">
+                    <div class="relative">
+                        <img src="/assets/sojib-profile.png" class="w-10 h-10 rounded-full object-cover border-2 border-brand-blue">
+                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-[#222] rounded-full"></span>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-white text-sm">Sojib</h3>
+                        <p class="text-xs text-gray-400">Online • Automation Expert</p>
+                    </div>
+                </div>
+                <button onclick="closeChat()" class="text-gray-600 hover:text-white transition-colors">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Chat Content Area -->
+            <div id="chatContent" class="flex-grow p-4 overflow-y-auto bg-[#111111] flex flex-col gap-4">
+                <!-- Messages will be injected here via JS -->
+            </div>
+
+            <!-- Chat Footer (Optional simulation of input) -->
+            <div class="p-3 bg-[#1a1a1a] border-t border-gray-700 flex gap-2">
+                <button class="flex-1 text-left text-gray-400 text-sm bg-[#222] py-3 px-4 rounded-xl cursor-not-allowed">
+                    Type a message...
+                </button>
+                <button class="w-11 h-11 bg-brand-blue text-white rounded-xl flex items-center justify-center hover:bg-blue-600 transition-colors">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container (for simple responses) -->
+    <div id="toast-container" class="fixed top-20 left-1/2 transform -translate-x-1/2 z-[60] pointer-events-none"></div>
+
+    <script>
+        // --- General Interaction ---
+
+        function fillCommand(text) {
+            if(text === 'About Me') {
+                startAboutChat();
+                return;
+            }
+            if(text === 'Projects') {
+                startProjectsChat();
+                return;
+            }
+            if(text === 'Skills') {
+                startSkillsChat();
+                return;
+            }
+            if(text === 'Contact') {
+                startContactChat();
+                return;
+            }
+            
+            // Normalize case for matching
+            const lowerText = text.toLowerCase();
+            
+            if(lowerText === 'age') {
+                startAgeChat();
+                return;
+            }
+            if(lowerText === 'education') {
+                startEducationChat();
+                return;
+            }
+            if(lowerText === 'cv' || lowerText === 'resume') {
+                startCVChat();
+                return;
+            }
+            if(lowerText === 'experience') {
+                startExperienceChat();
+                return;
+            }
+            if(lowerText === 'hobbies') {
+                startHobbiesChat();
+                return;
+            }
+
+            const input = document.getElementById('commandInput');
+            input.value = text;
+            input.focus();
+        }
+
+        function handleCommand(e) {
+            e.preventDefault();
+            const input = document.getElementById('commandInput');
+            const val = input.value.trim().toLowerCase();
+            
+            if(!val) return;
+
+            // Check specific triggers
+            if(val.includes('about')) {
+                startAboutChat();
+                input.value = '';
+                input.blur();
+                return;
+            }
+            if(val.includes('project') || val.includes('work')) {
+                startProjectsChat();
+                input.value = '';
+                input.blur();
+                return;
+            }
+            if(val.includes('skill')) {
+                startSkillsChat();
+                input.value = '';
+                input.blur();
+                return;
+            }
+            if(val.includes('contact') || val.includes('mail')) {
+                startContactChat();
+                input.value = '';
+                input.blur();
+                return;
+            }
+            if(val.includes('age') || val.includes('old')) {
+                startAgeChat();
+                input.value = '';
+                input.blur();
+                return;
+            }
+            if(val.includes('education') || val.includes('study')) {
+                startEducationChat();
+                input.value = '';
+                input.blur();
+                return;
+            }
+            if(val.includes('cv') || val.includes('resume')) {
+                startCVChat();
+                input.value = '';
+                input.blur();
+                return;
+            }
+            if(val.includes('experience')) {
+                startExperienceChat();
+                input.value = '';
+                input.blur();
+                return;
+            }
+            if(val.includes('hobbies')) {
+                startHobbiesChat();
+                input.value = '';
+                input.blur();
+                return;
+            }
+
+            showToast(`Searching for "${input.value}"...`);
+            input.value = '';
+            input.blur();
+
+            setTimeout(() => {
+                showResponse("I can tell you about my work, skills, or experience.");
+            }, 800);
+        }
+
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'bg-brand-blue text-white px-6 py-3 rounded-full shadow-lg mb-3 text-sm font-medium animate-bounce';
+            toast.innerText = message;
+            container.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        function showResponse(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            // Hardcoded dark theme style
+            const bgClass = 'bg-[#1a1a1a]';
+            const textClass = 'text-white';
+            const borderClass = 'border-gray-700';
+
+            toast.className = `${bgClass} border ${borderClass} ${textClass} px-6 py-3 rounded-xl shadow-2xl mb-3 text-sm flex items-center gap-2`;
+            toast.innerHTML = `<i class="fa-solid fa-robot text-brand-blue"></i> <span>${message}</span>`;
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-10px)';
+                toast.style.transition = 'all 0.5s';
+                setTimeout(() => toast.remove(), 500);
+            }, 4000);
+        }
+
+        function scrollToSection(id) {
+            showToast(`Navigating to ${id}...`);
+        }
+
+        document.querySelectorAll('.text-gray-400.cursor-pointer').forEach(span => {
+            span.addEventListener('click', function() {
+                fillCommand(this.innerText);
+            });
+        });
+
+        // --- Chat Modal Logic ---
+
+        const chatModal = document.getElementById('chatModal');
+        const chatWindow = document.getElementById('chatWindow');
+        const chatContent = document.getElementById('chatContent');
+        let chatTimeouts = [];
+        let currentProjectIndex = 0;
+
+        const projectsData = [
+            {
+                title: "OCR Master",
+                intro: "Here's a powerful tool I built:",
+                details: [
+                    { icon: "fa-solid fa-wand-magic-sparkles", text: "AI-powered OCR tool enabling rapid digitization of multilingual documents", color: "text-purple-500" },
+                    { icon: "fa-solid fa-bolt", text: "Reduced manual typing time drastically for internal teams", color: "text-yellow-500" },
+                    { icon: "fa-brands fa-js", text: "Gemini API, HTML, CSS, JavaScript", color: "text-blue-500" },
+                    { icon: "fa-solid fa-briefcase", text: "Professional (Automation Tool)", color: "text-gray-500" }
+                ]
+            },
+            {
+                title: "360 Formation – Quiz Converter",
+                intro: "This one saves days of work:",
+                details: [
+                    { icon: "fa-solid fa-file-csv", text: "Automated conversion of quiz documents and PPTs into structured Google Sheets", color: "text-green-500" },
+                    { icon: "fa-solid fa-clock", text: "Reduced MCQ upload time from 1 full day to 2–3 minutes", color: "text-red-500" },
+                    { icon: "fa-solid fa-code", text: "HTML, CSS, JavaScript", color: "text-blue-500" },
+                    { icon: "fa-solid fa-briefcase", text: "Professional Automation Tool", color: "text-gray-500" }
+                ]
+            },
+            {
+                title: "Online Library Management",
+                intro: "An academic project I'm proud of:",
+                details: [
+                    { icon: "fa-solid fa-book-open", text: "Full-featured web application with book, user, staff, and category management", color: "text-orange-500" },
+                    { icon: "fa-brands fa-node", text: "HTML, CSS, Node.js, MySQL", color: "text-green-600" },
+                    { icon: "fa-solid fa-graduation-cap", text: "Academic Project", color: "text-blue-400" }
+                ]
+            },
+            {
+                title: "QR Code Generator",
+                intro: "A useful utility tool:",
+                details: [
+                    { icon: "fa-solid fa-qrcode", text: "Free, lifetime QR code generation tool with customization features", color: "text-gray-200" },
+                    { icon: "fa-solid fa-infinity", text: "Eliminates dependency on paid or time-limited platforms", color: "text-purple-500" },
+                    { icon: "fa-solid fa-microchip", text: "Gemini API, HTML, CSS, JavaScript", color: "text-blue-500" },
+                    { icon: "fa-solid fa-briefcase", text: "Professional Tool", color: "text-gray-500" }
+                ]
+            },
+            {
+                title: "Automation Project Store",
+                intro: "To organize everything:",
+                details: [
+                    { icon: "fa-solid fa-store", text: "Centralized platform for storing and accessing internal automation tools", color: "text-pink-500" },
+                    { icon: "fa-solid fa-users", text: "Improved accessibility and adoption of automation across departments", color: "text-teal-500" },
+                    { icon: "fa-solid fa-briefcase", text: "Professional Project", color: "text-gray-500" }
+                ]
+            }
+        ];
+
+        function openModal() {
+            chatModal.classList.remove('hidden');
+            setTimeout(() => {
+                chatWindow.classList.remove('scale-95', 'opacity-0');
+                chatWindow.classList.add('scale-100', 'opacity-100');
+            }, 10);
+            chatContent.innerHTML = '';
+            chatTimeouts.forEach(t => clearTimeout(t));
+            chatTimeouts = [];
+        }
+
+        function startAboutChat() {
+            openModal();
+
+            // Conversation Flow
+            addMessage('user', 'Tell me more about yourself.');
+
+            chatTimeouts.push(setTimeout(() => showTyping(), 500));
+            chatTimeouts.push(setTimeout(() => {
+                removeTyping();
+                addMessage('bot', "I'm an automation-focused developer passionate about building AI-powered tools and workflow systems that dramatically improve efficiency and solve real operational problems.");
+            }, 1500));
+
+            const details = [
+                { icon: 'fa-solid fa-briefcase', text: '3+ Years of Professional Experience', color: 'text-blue-500' },
+                { icon: 'fa-solid fa-building-columns', text: 'Senior Executive at 10 Minute School', color: 'text-orange-500' },
+                { icon: 'fa-solid fa-robot', text: '5+ Automation & AI Tools Developed', color: 'text-purple-500' },
+                { icon: 'fa-solid fa-mobile-screen', text: 'Experienced in Flutter & Web Technologies', color: 'text-cyan-500' },
+                { icon: 'fa-solid fa-location-dot', text: 'Based in Dhaka, Bangladesh', color: 'text-red-500' }
+            ];
+
+            let delay = 2500;
+
+            details.forEach((item) => {
+                chatTimeouts.push(setTimeout(() => showTyping(), delay));
+                delay += 800; 
+                chatTimeouts.push(setTimeout(() => {
+                    removeTyping();
+                    addIconMessage(item);
+                }, delay));
+                delay += 600; 
+            });
+            
+            chatTimeouts.push(setTimeout(() => {
+                addChoiceButtons([
+                    { text: "See Projects", onclick: "startProjectsChat()", primary: true },
+                    { text: "Contact Me", onclick: "fillCommand('Contact')", primary: true },
+                    { text: "Close", onclick: "closeChat()", primary: false }
+                ]);
+            }, delay + 500));
+        }
+
+        function startProjectsChat() {
+            openModal();
+            currentProjectIndex = 0;
+            
+            addMessage('user', 'Show me your projects.');
+            
+            // Start showing the first project
+            showNextProject();
+        }
+
+        function showNextProject() {
+            if (currentProjectIndex >= projectsData.length) {
+                chatTimeouts.push(setTimeout(() => showTyping(), 500));
+                chatTimeouts.push(setTimeout(() => {
+                    removeTyping();
+                    addMessage('bot', "That's all the major projects I have to show right now!");
+                    addChoiceButtons([
+                        { text: "About Me", onclick: "startAboutChat()", primary: true },
+                        { text: "Contact", onclick: "fillCommand('Contact')", primary: true },
+                        { text: "Close", onclick: "closeChat()", primary: false }
+                    ]);
+                }, 1500));
+                return;
+            }
+
+            const project = projectsData[currentProjectIndex];
+            let delay = 500;
+
+            // Intro text
+            chatTimeouts.push(setTimeout(() => showTyping(), delay));
+            delay += 1000;
+            chatTimeouts.push(setTimeout(() => {
+                removeTyping();
+                addMessage('bot', `<strong>${project.title}</strong><br><span class="text-xs text-gray-500">${project.intro}</span>`);
+            }, delay));
+            delay += 500;
+
+            // Details
+            project.details.forEach(item => {
+                chatTimeouts.push(setTimeout(() => showTyping(), delay));
+                delay += 800;
+                chatTimeouts.push(setTimeout(() => {
+                    removeTyping();
+                    addIconMessage(item);
+                }, delay));
+                delay += 400;
+            });
+
+            // "Next" Button logic
+            chatTimeouts.push(setTimeout(() => {
+                const isLast = currentProjectIndex === projectsData.length - 1;
+                const nextBtnText = isLast ? "Finish" : "Show Next Project";
+                
+                addChoiceButtons([
+                    { text: nextBtnText, onclick: "showNextProject()", primary: true },
+                    { text: "Contact", onclick: "fillCommand('Contact')", primary: false },
+                    { text: "Close", onclick: "closeChat()", primary: false }
+                ]);
+                
+                // Increment for next time
+                currentProjectIndex++;
+                
+            }, delay + 500));
+        }
+
+        function startSkillsChat() {
+            openModal();
+            addMessage('user', 'What are your skills?');
+            
+            chatTimeouts.push(setTimeout(() => showTyping(), 500));
+            chatTimeouts.push(setTimeout(() => {
+                removeTyping();
+                addMessage('bot', "Here is my technical stack:");
+            }, 1500));
+
+            const skills = [
+                { icon: 'fa-solid fa-code', text: '<strong>Programming Languages:</strong><br>Python, Dart, Java, C, JavaScript', color: 'text-blue-500' },
+                { icon: 'fa-solid fa-layer-group', text: '<strong>Frameworks & Libraries:</strong><br>Flutter, React, Node.js', color: 'text-green-500' },
+                { icon: 'fa-solid fa-database', text: '<strong>Databases:</strong><br>MySQL, Firebase', color: 'text-orange-500' },
+                { icon: 'fa-solid fa-brain', text: '<strong>AI & Automation Tools:</strong><br>Gemini API, Mistral AI, OpenAI API, OCR Tools', color: 'text-purple-500' },
+                { icon: 'fa-solid fa-globe', text: '<strong>Web Technologies:</strong><br>HTML, CSS, JavaScript', color: 'text-cyan-500' },
+                { icon: 'fa-solid fa-screwdriver-wrench', text: '<strong>Other Tools:</strong><br>Git, Workflow Automation, Google Workspace Integrations', color: 'text-gray-500' }
+            ];
+
+            let delay = 2500;
+
+            skills.forEach((item) => {
+                chatTimeouts.push(setTimeout(() => showTyping(), delay));
+                delay += 800; 
+                chatTimeouts.push(setTimeout(() => {
+                    removeTyping();
+                    addIconMessage(item);
+                }, delay));
+                delay += 600; 
+            });
+            
+            chatTimeouts.push(setTimeout(() => {
+                addChoiceButtons([
+                    { text: "See Projects", onclick: "startProjectsChat()", primary: true },
+                    { text: "Contact Me", onclick: "fillCommand('Contact')", primary: true },
+                    { text: "Close", onclick: "closeChat()", primary: false }
+                ]);
+            }, delay + 500));
+        }
+
+        function startContactChat() {
+            openModal();
+            addMessage('user', 'How can I contact you?');
+
+            chatTimeouts.push(setTimeout(() => showTyping(), 500));
+            chatTimeouts.push(setTimeout(() => {
+                removeTyping();
+                addMessage('bot', "Feel free to get in touch through any of the channels below.");
+            }, 1500));
+
+            // Contact Info Box
+            chatTimeouts.push(setTimeout(() => showTyping(), 2500));
+            chatTimeouts.push(setTimeout(() => {
+                removeTyping();
+                addContactInfoBox(); 
+            }, 3500));
+
+            // Social Media Icons
+            chatTimeouts.push(setTimeout(() => showTyping(), 4500));
+            chatTimeouts.push(setTimeout(() => {
+                removeTyping();
+                addSocialIcons();
+            }, 5500));
+
+            // Options
+            chatTimeouts.push(setTimeout(() => {
+                addChoiceButtons([
+                    { text: "About Me", onclick: "startAboutChat()", primary: true },
+                    { text: "See Projects", onclick: "startProjectsChat()", primary: true },
+                    { text: "Close", onclick: "closeChat()", primary: false }
+                ]);
+            }, 6000));
+        }
+
+        function startAgeChat() {
+            openModal();
+            addMessage('user', 'How old are you?');
+
+            chatTimeouts.push(setTimeout(() => showTyping(), 500));
+            
+            // Calculate Age
+            // Birth Date: 23 May, 2002
+            const birthDate = new Date('2002-05-23');
+            const now = new Date();
+            
+            let years = now.getFullYear() - birthDate.getFullYear();
+            let months = now.getMonth() - birthDate.getMonth();
+            let days = now.getDate() - birthDate.getDate();
+
+            if (days < 0) {
+                months--;
+            }
+
+            if (months < 0) {
+                years--;
+            }
+
+            // Adjusted timing slightly since we removed one message step
+            chatTimeouts.push(setTimeout(() => {
+                removeTyping();
+                
+                const div = document.createElement('div');
+                div.className = 'flex w-full justify-start animate-message-pop';
+                
+                div.innerHTML = `
+                    <div class="relative max-w-[85%] px-4 py-3 rounded-2xl rounded-tl-none bg-[#222] border border-gray-700 shadow-sm flex items-center gap-3 chat-bubble-bot">
+                        <div class="w-10 h-10 rounded-full bg-purple-900/30 flex items-center justify-center flex-shrink-0 text-purple-400">
+                            <i class="fa-solid fa-hourglass-half text-lg"></i>
+                        </div>
+                        <p class="text-sm font-medium text-gray-200">
+                            I am currently <span class="text-brand-blue font-bold">${years} Years</span> old.
+                        </p>
+                    </div>
+                `;
+                chatContent.appendChild(div);
+                scrollToBottom();
+
+            }, 1500));
+
+            chatTimeouts.push(setTimeout(() => {
+                 addChoiceButtons([
+                    { text: "About Me", onclick: "startAboutChat()", primary: true },
+                    { text: "Close", onclick: "closeChat()", primary: false }
+                ]);
+            }, 2000));
+        }
+        
+        function startEducationChat() {
+            openModal();
+            addMessage('user', 'Tell me about your education.');
+
+            chatTimeouts.push(setTimeout(() => showTyping(), 500));
+            chatTimeouts.push(setTimeout(() => {
+                removeTyping();
+                addMessage('bot', "Here is my academic background:");
+            }, 1500));
+
+            const educationData = [
+                {
+                    degree: "Bachelor of Science (BSc)",
+                    year: "2022 - Present",
+                    field: "Computer Science & Engineering",
+                    institution: "Southeast University",
+                    color: "text-blue-500",
+                    bg: "bg-blue-900/30"
+                },
+                {
+                    degree: "Higher Secondary Certificate (HSC)",
+                    year: "2019 - 2020",
+                    field: "Science",
+                    institution: "Wali Newaz Khan College",
+                    color: "text-green-500",
+                    bg: "bg-green-900/30"
+                },
+                {
+                    degree: "Secondary School Certificate (SSC)",
+                    year: "2017 - 2018",
+                    field: "Science",
+                    institution: "Shimulia High School",
+                    color: "text-purple-500",
+                    bg: "bg-purple-900/30"
+                }
+            ];
+
+            let delay = 2500;
+
+            educationData.forEach((edu) => {
+                chatTimeouts.push(setTimeout(() => showTyping(), delay));
+                delay += 800; // Typing Duration
+                chatTimeouts.push(setTimeout(() => {
+                    removeTyping();
+                    addEducationBox(edu);
+                }, delay));
+                delay += 600; // Gap
+            });
+
+            chatTimeouts.push(setTimeout(() => {
+                addChoiceButtons([
+                    { text: "See Projects", onclick: "startProjectsChat()", primary: true },
+                    { text: "Contact Me", onclick: "fillCommand('Contact')", primary: true },
+                    { text: "Close", onclick: "closeChat()", primary: false }
+                ]);
+            }, delay + 500));
+        }
+        
+        function startCVChat() {
+            openModal();
+            addMessage('user', 'Can I see your CV?');
+
+            chatTimeouts.push(setTimeout(() => showTyping(), 500));
+            chatTimeouts.push(setTimeout(() => {
+                removeTyping();
+                addMessage('bot', "Here is a quick summary of my professional profile:");
+            }, 1500));
+
+            // Show Resume Summary Box
+            chatTimeouts.push(setTimeout(() => showTyping(), 2500));
+            chatTimeouts.push(setTimeout(() => {
+                removeTyping();
+                
+                const div = document.createElement('div');
+                div.className = 'flex w-full justify-start animate-message-pop';
+                div.innerHTML = `
+                    <div class="relative max-w-[90%] px-5 py-5 rounded-2xl rounded-tl-none bg-[#222] border border-gray-700 shadow-sm flex flex-col gap-4 chat-bubble-bot">
+                        
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-blue-900/30 flex items-center justify-center text-blue-500 shrink-0 mt-1">
+                                <i class="fa-solid fa-briefcase"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white text-sm">3+ Years Experience</h4>
+                                <p class="text-xs text-gray-400 mt-1">Senior Executive at 10 Minute School, leading content operations & automation.</p>
+                            </div>
+                        </div>
+
+                        <div class="w-full h-[1px] bg-gray-700"></div>
+
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-purple-900/30 flex items-center justify-center text-purple-500 shrink-0 mt-1">
+                                <i class="fa-solid fa-microchip"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white text-sm">Automation Specialist</h4>
+                                <p class="text-xs text-gray-400 mt-1">Expertise in AI-powered tools, workflow optimization & Gemini API.</p>
+                            </div>
+                        </div>
+
+                         <div class="w-full h-[1px] bg-gray-700"></div>
+
+                        <div class="flex items-start gap-3">
+                            <div class="w-8 h-8 rounded-full bg-green-900/30 flex items-center justify-center text-green-500 shrink-0 mt-1">
+                                <i class="fa-solid fa-graduation-cap"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white text-sm">BSc in CSE</h4>
+                                <p class="text-xs text-gray-400 mt-1">Final Year at Southeast University (CGPA: 3.30).</p>
+                            </div>
+                        </div>
+
+                        <div class="w-full h-[1px] bg-gray-700"></div>
+
+                        <div class="flex items-start gap-3">
+                             <div class="w-8 h-8 rounded-full bg-orange-900/30 flex items-center justify-center text-orange-500 shrink-0 mt-1">
+                                <i class="fa-solid fa-laptop-code"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white text-sm">Tech Stack</h4>
+                                <p class="text-xs text-gray-400 mt-1">Flutter, Python, React, Node.js, MySQL, Firebase.</p>
+                            </div>
+                        </div>
+
+                         <div class="w-full h-[1px] bg-gray-700"></div>
+
+                        <div class="flex items-start gap-3">
+                             <div class="w-8 h-8 rounded-full bg-yellow-900/30 flex items-center justify-center text-yellow-500 shrink-0 mt-1">
+                                <i class="fa-solid fa-trophy"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white text-sm">Champion</h4>
+                                <p class="text-xs text-gray-400 mt-1">10 Minute School Content Operations Hackathon 2025.</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                chatContent.appendChild(div);
+                scrollToBottom();
+
+            }, 3500));
+
+             // Download Button
+             chatTimeouts.push(setTimeout(() => {
+                const div = document.createElement('div');
+                div.className = 'flex w-full justify-start animate-message-pop';
+                div.innerHTML = `
+                    <div class="flex flex-wrap gap-2 mt-2">
+                         <a href="https://drive.google.com/uc?export=download&id=1jzHs-ItsfHyMsvGz9cetribjluoEMHn7" class="px-5 py-2.5 bg-brand-blue hover:bg-blue-600 text-white rounded-full text-sm font-semibold transition-colors flex items-center gap-2 shadow-lg hover:shadow-blue-500/30">
+                            <i class="fa-solid fa-download"></i> Download CV
+                        </a>
+                    </div>
+                `;
+                chatContent.appendChild(div);
+                scrollToBottom();
+            }, 4000));
+
+            chatTimeouts.push(setTimeout(() => {
+                addChoiceButtons([
+                    { text: "Contact Me", onclick: "fillCommand('Contact')", primary: true },
+                    { text: "Close", onclick: "closeChat()", primary: false }
+                ]);
+            }, 4500));
+        }
+
+        function startExperienceChat() {
+            openModal();
+            addMessage('user', 'Tell me about your work experience.');
+
+            chatTimeouts.push(setTimeout(() => showTyping(), 500));
+            chatTimeouts.push(setTimeout(() => {
+                removeTyping();
+                addMessage('bot', "Here is my professional journey:");
+            }, 1500));
+
+            const experienceData = [
+                {
+                    role: "Senior Executive – Content Operations",
+                    company: "10 Minute School",
+                    location: "Dhaka, Bangladesh",
+                    year: "December 2023 – Present",
+                    color: "text-orange-500",
+                    bg: "bg-orange-900/30"
+                },
+                {
+                    role: "Executive – Content Academics",
+                    company: "10 Minute School",
+                    location: "Dhaka, Bangladesh",
+                    year: "December 2022 – December 2023",
+                    color: "text-blue-500",
+                    bg: "bg-blue-900/30"
+                }
+            ];
+
+            let delay = 2500;
+
+            experienceData.forEach((exp) => {
+                chatTimeouts.push(setTimeout(() => showTyping(), delay));
+                delay += 800;
+                chatTimeouts.push(setTimeout(() => {
+                    removeTyping();
+                    addExperienceBox(exp);
+                }, delay));
+                delay += 600;
+            });
+
+            chatTimeouts.push(setTimeout(() => {
+                addChoiceButtons([
+                    { text: "See Projects", onclick: "startProjectsChat()", primary: true },
+                    { text: "Contact Me", onclick: "fillCommand('Contact')", primary: true },
+                    { text: "Close", onclick: "closeChat()", primary: false }
+                ]);
+            }, delay + 500));
+        }
+
+        function startHobbiesChat() {
+            openModal();
+            addMessage('user', 'What are your hobbies?');
+
+            chatTimeouts.push(setTimeout(() => showTyping(), 500));
+            chatTimeouts.push(setTimeout(() => {
+                removeTyping();
+                addMessage('bot', "Beyond coding, I like to keep my mind and body active with these activities:");
+            }, 1500));
+
+            chatTimeouts.push(setTimeout(() => showTyping(), 2500));
+            chatTimeouts.push(setTimeout(() => {
+                removeTyping();
+                
+                const div = document.createElement('div');
+                div.className = 'flex w-full justify-start animate-message-pop';
+                
+                div.innerHTML = `
+                    <div class="relative max-w-[85%] px-5 py-4 rounded-2xl rounded-tl-none bg-[#222] border border-gray-700 shadow-sm flex flex-col gap-3 chat-bubble-bot">
+                        
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-blue-900/30 flex items-center justify-center text-blue-500 shrink-0">
+                                <i class="fa-solid fa-camera"></i>
+                            </div>
+                            <div class="text-sm">
+                                <span class="font-bold text-white">Photography</span>
+                                <span class="text-gray-400"> — Capturing urban landscapes and nature.</span>
+                            </div>
+                        </div>
+
+                        <div class="w-full h-[1px] bg-gray-700"></div>
+
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-green-900/30 flex items-center justify-center text-green-500 shrink-0">
+                                <i class="fa-solid fa-plane-departure"></i>
+                            </div>
+                            <div class="text-sm">
+                                <span class="font-bold text-white">Traveling</span>
+                                <span class="text-gray-400"> — Exploring new cultures and cuisines.</span>
+                            </div>
+                        </div>
+
+                        <div class="w-full h-[1px] bg-gray-700"></div>
+
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-purple-900/30 flex items-center justify-center text-purple-500 shrink-0">
+                                <i class="fa-solid fa-gamepad"></i>
+                            </div>
+                            <div class="text-sm">
+                                <span class="font-bold text-white">Gaming</span>
+                                <span class="text-gray-400"> — Love immersive RPGs and strategy games.</span>
+                            </div>
+                        </div>
+
+                        <div class="w-full h-[1px] bg-gray-700"></div>
+
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-pink-900/30 flex items-center justify-center text-pink-500 shrink-0">
+                                <i class="fa-solid fa-music"></i>
+                            </div>
+                            <div class="text-sm">
+                                <span class="font-bold text-white">Music</span>
+                                <span class="text-gray-400"> — Lo-fi beats while coding and rock for the road.</span>
+                            </div>
+                        </div>
+
+                        <div class="w-full h-[1px] bg-gray-700"></div>
+
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-orange-900/30 flex items-center justify-center text-orange-500 shrink-0">
+                                <i class="fa-regular fa-futbol"></i>
+                            </div>
+                            <div class="text-sm">
+                                <span class="font-bold text-white">Football</span>
+                                <span class="text-gray-400"> — Enjoying in local leagues and following the beautiful game.</span>
+                            </div>
+                        </div>
+
+                    </div>
+                `;
+                chatContent.appendChild(div);
+                scrollToBottom();
+
+            }, 3500));
+
+            chatTimeouts.push(setTimeout(() => {
+                addChoiceButtons([
+                    { text: "Contact Me", onclick: "fillCommand('Contact')", primary: true },
+                    { text: "Close", onclick: "closeChat()", primary: false }
+                ]);
+            }, 4000));
+        }
+
+        function addExperienceBox(exp) {
+            const div = document.createElement('div');
+            div.className = 'flex w-full justify-start animate-message-pop';
+            
+            div.innerHTML = `
+                <div class="relative max-w-[85%] px-5 py-4 rounded-2xl rounded-tl-none bg-[#222] border border-gray-700 shadow-sm flex flex-col gap-2 chat-bubble-bot">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h4 class="font-bold text-white text-base">${exp.role}</h4>
+                            <p class="text-xs text-brand-blue font-medium mt-1 mb-2">
+                                <i class="fa-solid fa-calendar-days mr-1"></i> ${exp.year}
+                            </p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full ${exp.bg} flex items-center justify-center ${exp.color}">
+                            <i class="fa-solid fa-briefcase"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full h-[1px] bg-gray-700 my-1"></div>
+                    
+                    <div class="flex items-center gap-2 text-sm text-gray-300">
+                        <i class="fa-solid fa-building w-5 text-center text-gray-400"></i>
+                        <span>${exp.company}</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-gray-300">
+                        <i class="fa-solid fa-location-dot w-5 text-center text-gray-400"></i>
+                        <span>${exp.location}</span>
+                    </div>
+                </div>
+            `;
+            chatContent.appendChild(div);
+            scrollToBottom();
+        }
+
+        function addEducationBox(edu) {
+            const div = document.createElement('div');
+            div.className = 'flex w-full justify-start animate-message-pop';
+            
+            div.innerHTML = `
+                <div class="relative max-w-[85%] px-5 py-4 rounded-2xl rounded-tl-none bg-[#222] border border-gray-700 shadow-sm flex flex-col gap-2 chat-bubble-bot">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <h4 class="font-bold text-white text-base">${edu.degree}</h4>
+                            <p class="text-xs text-brand-blue font-medium mt-1 mb-2">
+                                <i class="fa-solid fa-calendar-days mr-1"></i> ${edu.year}
+                            </p>
+                        </div>
+                        <div class="w-8 h-8 rounded-full ${edu.bg} flex items-center justify-center ${edu.color}">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full h-[1px] bg-gray-700 my-1"></div>
+                    
+                    <div class="flex items-center gap-2 text-sm text-gray-300">
+                        <i class="fa-solid fa-flask w-5 text-center text-gray-400"></i>
+                        <span>${edu.field}</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-gray-300">
+                        <i class="fa-solid fa-university w-5 text-center text-gray-400"></i>
+                        <span>${edu.institution}</span>
+                    </div>
+                </div>
+            `;
+            chatContent.appendChild(div);
+            scrollToBottom();
+        }
+
+        function addContactInfoBox() {
+            const div = document.createElement('div');
+            div.className = 'flex w-full justify-start animate-message-pop';
+            div.innerHTML = `
+                <div class="relative max-w-[85%] px-5 py-4 rounded-2xl rounded-tl-none bg-[#222] border border-gray-700 shadow-sm flex flex-col gap-3 chat-bubble-bot">
+                     <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-blue-900/30 flex items-center justify-center text-blue-500">
+                            <i class="fa-solid fa-phone"></i>
+                        </div>
+                        <div class="text-sm">
+                            <p class="text-xs text-gray-400">Phone</p>
+                            <p class="font-medium text-gray-200">+8801609079852</p>
+                        </div>
+                    </div>
+                    <div class="w-full h-[1px] bg-gray-700"></div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-8 h-8 rounded-full bg-green-900/30 flex items-center justify-center text-green-500">
+                            <i class="fa-solid fa-envelope"></i>
+                        </div>
+                        <div class="text-sm">
+                            <p class="text-xs text-gray-400">Email</p>
+                            <p class="font-medium text-gray-200 break-all">sojib.seu.cse@gmail.com</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+            chatContent.appendChild(div);
+            scrollToBottom();
+        }
+
+        function addSocialIcons() {
+            const div = document.createElement('div');
+            div.className = 'flex w-full justify-start animate-message-pop';
+            // Social links
+            const socials = [
+                { icon: 'fa-brands fa-linkedin-in', link: 'https://linkedin.com/in/mohammad-sojib-seu', color: 'bg-[#0077b5] text-white' },
+                { icon: 'fa-brands fa-github', link: 'https://github.com/sojibseucse62', color: 'bg-[#333] text-white' },
+                { icon: 'fa-brands fa-facebook-f', link: 'https://www.facebook.com/sojib.seu', color: 'bg-[#1877f2] text-white' },
+                { icon: 'fa-brands fa-instagram', link: 'https://www.instagram.com/im.mohammadsojib/', color: 'bg-[#e4405f] text-white' }
+            ];
+
+            let iconsHtml = socials.map(s => `
+                <a href="${s.link}" target="_blank" class="w-10 h-10 rounded-full ${s.color} flex items-center justify-center hover:scale-110 transition-transform shadow-md">
+                    <i class="${s.icon}"></i>
+                </a>
+            `).join('');
+
+            div.innerHTML = `
+                <div class="flex gap-3 mt-1 pl-1">
+                    ${iconsHtml}
+                </div>
+            `;
+            chatContent.appendChild(div);
+            scrollToBottom();
+        }
+
+        function closeChat() {
+            chatWindow.classList.remove('scale-100', 'opacity-100');
+            chatWindow.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                chatModal.classList.add('hidden');
+            }, 300);
+            chatTimeouts.forEach(t => clearTimeout(t));
+        }
+
+        function addMessage(sender, text) {
+            const div = document.createElement('div');
+            const isBot = sender === 'bot';
+            
+            div.className = `flex w-full ${isBot ? 'justify-start' : 'justify-end'} animate-message-pop`;
+            
+            const bubbleColor = isBot 
+                ? 'bg-[#222] text-gray-200 border border-gray-700' 
+                : 'bg-brand-blue text-white';
+
+            const tailClass = isBot ? 'chat-bubble-bot' : 'chat-bubble-left';
+
+            div.innerHTML = `
+                <div class="relative max-w-[80%] px-5 py-3 rounded-2xl ${bubbleColor} shadow-sm ${isBot ? 'rounded-tl-none chat-bubble-bot' : 'rounded-br-none'}">
+                    <p class="text-sm leading-relaxed">${text}</p>
+                </div>
+            `;
+            
+            chatContent.appendChild(div);
+            scrollToBottom();
+        }
+
+        function addIconMessage(item) {
+            const div = document.createElement('div');
+            div.className = 'flex w-full justify-start animate-message-pop';
+            
+            div.innerHTML = `
+                <div class="relative max-w-[85%] px-4 py-3 rounded-2xl rounded-tl-none bg-[#222] border border-gray-700 shadow-sm flex items-center gap-3 chat-bubble-bot">
+                    <div class="w-10 h-10 rounded-full bg-[#333] flex items-center justify-center flex-shrink-0">
+                        <i class="${item.icon} ${item.color} text-lg"></i>
+                    </div>
+                    <p class="text-sm font-medium text-gray-200">${item.text}</p>
+                </div>
+            `;
+            chatContent.appendChild(div);
+            scrollToBottom();
+        }
+
+        function addChoiceButtons(buttons) {
+            const div = document.createElement('div');
+            div.className = 'flex w-full justify-start animate-message-pop';
+            
+            let buttonsHtml = '';
+            buttons.forEach(btn => {
+                const style = btn.primary 
+                    ? 'bg-brand-blue/10 hover:bg-brand-blue/20 text-brand-blue border-brand-blue/20' 
+                    : 'bg-gray-800 hover:bg-gray-700 text-gray-400';
+                
+                buttonsHtml += `<button onclick="${btn.onclick}" class="px-4 py-2 ${style} rounded-full text-xs font-semibold transition-colors border border-transparent">${btn.text}</button>`;
+            });
+
+            div.innerHTML = `<div class="flex flex-wrap gap-2 mt-2">${buttonsHtml}</div>`;
+            chatContent.appendChild(div);
+            scrollToBottom();
+        }
+
+        function showTyping() {
+            removeTyping();
+            const div = document.createElement('div');
+            div.id = 'typingIndicator';
+            div.className = 'flex w-full justify-start animate-message-pop';
+            div.innerHTML = `
+                <div class="bg-[#222] px-4 py-3 rounded-2xl rounded-tl-none flex gap-1 items-center h-10 w-16">
+                    <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+                    <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+                    <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+                </div>
+            `;
+            chatContent.appendChild(div);
+            scrollToBottom();
+        }
+
+        function removeTyping() {
+            const el = document.getElementById('typingIndicator');
+            if(el) el.remove();
+        }
+
+        function scrollToBottom() {
+            chatContent.scrollTop = chatContent.scrollHeight;
+        }
+
+        // Close chat on outside click
+        chatModal.addEventListener('click', (e) => {
+            if (e.target === chatModal) closeChat();
+        });
+
+    </script>
+</body>
+</html>
