@@ -315,14 +315,16 @@
             </div>
 
             <!-- Chat Footer (Optional simulation of input) -->
-            <div class="p-3 bg-[#1a1a1a] border-t border-gray-700 flex gap-2">
-                <button class="flex-1 text-left text-gray-400 text-sm bg-[#222] py-3 px-4 rounded-xl cursor-not-allowed">
-                    Type a message...
-                </button>
-                <button class="w-11 h-11 bg-brand-blue text-white rounded-xl flex items-center justify-center hover:bg-blue-600 transition-colors">
+            <form onsubmit="handleModalChat(event)" class="p-3 bg-[#1a1a1a] border-t border-gray-700 flex gap-2">
+                <input type="text" 
+                    id="modalInput" 
+                    placeholder="Type about, projects, skills..." 
+                    autocomplete="off"
+                    class="flex-1 text-white text-sm bg-[#222] py-3 px-4 rounded-xl outline-none focus:ring-2 focus:ring-brand-blue/50 border border-transparent placeholder-gray-500 transition-all">
+                <button type="submit" class="w-11 h-11 bg-brand-blue text-white rounded-xl flex items-center justify-center hover:bg-blue-600 transition-colors shadow-lg shadow-blue-500/20">
                     <i class="fa-solid fa-paper-plane"></i>
                 </button>
-            </div>
+            </form>
         </div>
     </div>
 
@@ -333,7 +335,7 @@
         // --- General Interaction ---
 
         function fillCommand(text) {
-            if(text === 'About Me') {
+            if(text === 'About Me' || text === 'about' || text === 'hello' || text === 'hi') {
                 startAboutChat();
                 return;
             }
@@ -369,7 +371,7 @@
                 startExperienceChat();
                 return;
             }
-            if(lowerText === 'hobbies') {
+            if(lowerText === 'hobbies' || lowerText === 'hobby') {
                 startHobbiesChat();
                 return;
             }
@@ -383,11 +385,13 @@
             e.preventDefault();
             const input = document.getElementById('commandInput');
             const val = input.value.trim().toLowerCase();
+            // Store original text for display in chat
+            const originalText = input.value; 
             
             if(!val) return;
 
             // Check specific triggers
-            if(val.includes('about')) {
+            if(val.includes('about') || val.includes('hello') || val.includes('hi')) {
                 startAboutChat();
                 input.value = '';
                 input.blur();
@@ -435,30 +439,113 @@
                 input.blur();
                 return;
             }
-            if(val.includes('hobbies')) {
+            if(val.includes('hobbies') || val.includes('hobby')) {
                 startHobbiesChat();
                 input.value = '';
                 input.blur();
                 return;
             }
 
-            showToast(`Searching for "${input.value}"...`);
+            // --- CHANGED SECTION STARTS HERE ---
+            
+            // 1. Open the modal so the user sees the chat
+            openModal();
+
+            // 2. Add the user's message to the chat
+            addMessage('user', originalText);
+
+            // 3. Clear the input
             input.value = '';
             input.blur();
 
-            setTimeout(() => {
-                showResponse("I can tell you about my work, skills, or experience.");
-            }, 800);
+            // 4. Show the fallback bot response
+            chatTimeouts.push(setTimeout(() => showTyping(), 200));
+            chatTimeouts.push(setTimeout(() => {
+                removeTyping();
+                addMessage('bot', `
+                    <strong>Hi there I'm Sojib!</strong><br>
+                    Please use the following commands to know more about me:<br>
+                    <span class="text-brand-blue font-semibold">about, skills, projects, experience, resume, contact.</span>
+                `);
+            }, 800));
         }
 
-        function showToast(message) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = 'bg-brand-blue text-white px-6 py-3 rounded-full shadow-lg mb-3 text-sm font-medium animate-bounce';
-            toast.innerText = message;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+        function handleModalChat(e) {
+            e.preventDefault();
+            const input = document.getElementById('modalInput');
+            const val = input.value.trim().toLowerCase();
+            
+            if(!val) return;
+            
+            input.value = ''; // Clear input immediately
+
+            // Check triggers - reusing the logic to switch flows
+            if(val.includes('about')) {
+                startAboutChat();
+                return;
+            }
+            if(val.includes('project') || val.includes('work')) {
+                startProjectsChat();
+                return;
+            }
+            if(val.includes('skill')) {
+                startSkillsChat();
+                return;
+            }
+            if(val.includes('contact') || val.includes('mail')) {
+                startContactChat();
+                return;
+            }
+            if(val.includes('age') || val.includes('old')) {
+                startAgeChat();
+                return;
+            }
+            if(val.includes('education') || val.includes('study')) {
+                startEducationChat();
+                return;
+            }
+            if(val.includes('cv') || val.includes('resume')) {
+                startCVChat();
+                return;
+            }
+            if(val.includes('experience')) {
+                startExperienceChat();
+                return;
+            }
+            if(val.includes('hobbies') || val.includes('hobby')) {
+                startHobbiesChat();
+                return;
+            }
+
+            // If no command matches, keep the chat open and show a helper message
+            // We append these manually because we aren't clearing the screen (start... functions clear screen)
+            addMessage('user', val); // Show what user typed
+            
+            chatTimeouts.push(setTimeout(() => showTyping(), 200));
+            chatTimeouts.push(setTimeout(() => {
+                removeTyping();
+                addMessage('bot', `
+                    <strong>Hi there I'm Sojib!</strong><br>
+                    Please use the following commands to know more about me:<br>
+                    <span class="text-brand-blue font-semibold">about, skills, projects, experience, resume, contact.</span>
+                `);
+                
+                // Add quick buttons to help them get back on track
+                addChoiceButtons([
+                    { text: "Projects", onclick: "startProjectsChat()", primary: true },
+                    { text: "Skills", onclick: "startSkillsChat()", primary: true }
+                ]);
+            }, 1000));
         }
+
+        // function showToast(message) {
+        //     const container = document.getElementById('toast-container');
+        //     const toast = document.createElement('div');
+        //     toast.className = 'bg-brand-blue text-white px-6 py-3 rounded-full shadow-lg mb-3 text-sm font-medium animate-bounce';
+        //     toast.innerText = message;
+        //     container.appendChild(toast);
+        //     setTimeout(() => toast.remove(), 3000);
+        // }
 
         function showResponse(message) {
             const container = document.getElementById('toast-container');
@@ -503,6 +590,8 @@
             {
                 title: "OCR Master",
                 intro: "Here's a powerful tool I built:",
+                // ADDED THIS LINE:
+                previewLink: "https://preview-google-lens-ocr-tool-kzmoef0f9uwdk6feu2y7.vusercontent.net/", 
                 details: [
                     { icon: "fa-solid fa-wand-magic-sparkles", text: "AI-powered OCR tool enabling rapid digitization of multilingual documents", color: "text-purple-500" },
                     { icon: "fa-solid fa-bolt", text: "Reduced manual typing time drastically for internal teams", color: "text-yellow-500" },
@@ -513,6 +602,7 @@
             {
                 title: "360 Formation – Quiz Converter",
                 intro: "This one saves days of work:",
+                previewLink: "https://sojibseucse62.github.io/pptx-doc-to-quiz-format/",
                 details: [
                     { icon: "fa-solid fa-file-csv", text: "Automated conversion of quiz documents and PPTs into structured Google Sheets", color: "text-green-500" },
                     { icon: "fa-solid fa-clock", text: "Reduced MCQ upload time from 1 full day to 2–3 minutes", color: "text-red-500" },
@@ -523,6 +613,7 @@
             {
                 title: "Online Library Management",
                 intro: "An academic project I'm proud of:",
+                previewLink: "https://www.linkedin.com/posts/mohammad-sojib-seu_just-completed-my-online-library-management-activity-7374517391390781440-muLH?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEStNV0B_4GFo2ora6hhl2zZZl2tt9IB2xg",
                 details: [
                     { icon: "fa-solid fa-book-open", text: "Full-featured web application with book, user, staff, and category management", color: "text-orange-500" },
                     { icon: "fa-brands fa-node", text: "HTML, CSS, Node.js, MySQL", color: "text-green-600" },
@@ -532,6 +623,7 @@
             {
                 title: "QR Code Generator",
                 intro: "A useful utility tool:",
+                previewLink: "https://sojibseucse62.github.io/qr-code-generator/",
                 details: [
                     { icon: "fa-solid fa-qrcode", text: "Free, lifetime QR code generation tool with customization features", color: "text-gray-200" },
                     { icon: "fa-solid fa-infinity", text: "Eliminates dependency on paid or time-limited platforms", color: "text-purple-500" },
@@ -542,6 +634,7 @@
             {
                 title: "Automation Project Store",
                 intro: "To organize everything:",
+                previewLink: "https://v0-automate-project-interface.vercel.app/",
                 details: [
                     { icon: "fa-solid fa-store", text: "Centralized platform for storing and accessing internal automation tools", color: "text-pink-500" },
                     { icon: "fa-solid fa-users", text: "Improved accessibility and adoption of automation across departments", color: "text-teal-500" },
@@ -595,6 +688,7 @@
             
             chatTimeouts.push(setTimeout(() => {
                 addChoiceButtons([
+                    { text: "Show Resume", onclick: "startCVChat()", primary: true },
                     { text: "See Projects", onclick: "startProjectsChat()", primary: true },
                     { text: "Contact Me", onclick: "fillCommand('Contact')", primary: true },
                     { text: "Close", onclick: "closeChat()", primary: false }
@@ -628,30 +722,74 @@
             }
 
             const project = projectsData[currentProjectIndex];
-            let delay = 500;
+            
+            chatTimeouts.push(setTimeout(() => showTyping(), 500));
 
-            // Intro text
-            chatTimeouts.push(setTimeout(() => showTyping(), delay));
-            delay += 1000;
             chatTimeouts.push(setTimeout(() => {
                 removeTyping();
-                addMessage('bot', `<strong>${project.title}</strong><br><span class="text-xs text-gray-500">${project.intro}</span>`);
-            }, delay));
-            delay += 500;
 
-            // Details
-            project.details.forEach(item => {
-                chatTimeouts.push(setTimeout(() => showTyping(), delay));
-                delay += 800;
-                chatTimeouts.push(setTimeout(() => {
-                    removeTyping();
-                    addIconMessage(item);
-                }, delay));
-                delay += 400;
-            });
+                // 1. Build Details List
+                let detailsHtml = '';
+                project.details.forEach(item => {
+                    detailsHtml += `
+                        <div class="flex items-start gap-3">
+                            <div class="w-6 h-6 rounded-full bg-[#333] flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <i class="${item.icon} ${item.color} text-xs"></i>
+                            </div>
+                            <span class="text-sm text-gray-300 leading-tight">${item.text}</span>
+                        </div>
+                    `;
+                });
 
-            // "Next" Button logic
-            chatTimeouts.push(setTimeout(() => {
+                // 2. Build Preview Section (Only if link exists)
+                let previewHtml = '';
+                if (project.previewLink) {
+                    previewHtml = `
+                        <div class="w-full h-[1px] bg-gray-700 my-2"></div>
+                        <a href="${project.previewLink}" target="_blank" class="block bg-[#1a1a1a] hover:bg-[#252525] border border-gray-700 hover:border-brand-blue/50 rounded-xl p-3 transition-all group mt-1">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-lg bg-brand-blue/10 flex items-center justify-center text-brand-blue group-hover:scale-110 transition-transform">
+                                    <i class="fa-solid fa-laptop-code"></i>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-sm font-semibold text-gray-200 group-hover:text-white truncate">Live Preview</h4>
+                                    <p class="text-xs text-gray-500 truncate group-hover:text-gray-400">Click to try ${project.title}</p>
+                                </div>
+                                <div class="text-gray-500 group-hover:text-brand-blue transition-colors">
+                                    <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                                </div>
+                            </div>
+                        </a>
+                    `;
+                }
+
+                // 3. Assemble the Box
+                const div = document.createElement('div');
+                div.className = 'flex w-full justify-start animate-message-pop';
+                
+                div.innerHTML = `
+                    <div class="relative max-w-[90%] px-5 py-5 rounded-2xl rounded-tl-none bg-[#222] border border-gray-700 shadow-sm flex flex-col gap-4 chat-bubble-bot">
+                        
+                        <div>
+                            <strong class="text-base text-white block">${project.title}</strong>
+                            <span class="text-xs text-gray-500 mt-1 block">${project.intro}</span>
+                        </div>
+
+                        <div class="w-full h-[1px] bg-gray-700"></div>
+
+                        <div class="flex flex-col gap-3">
+                            ${detailsHtml}
+                        </div>
+
+                        ${previewHtml}
+
+                    </div>
+                `;
+                
+                chatContent.appendChild(div);
+                scrollToBottom();
+
+                // 4. Show Buttons
                 const isLast = currentProjectIndex === projectsData.length - 1;
                 const nextBtnText = isLast ? "Finish" : "Show Next Project";
                 
@@ -660,11 +798,10 @@
                     { text: "Contact", onclick: "fillCommand('Contact')", primary: false },
                     { text: "Close", onclick: "closeChat()", primary: false }
                 ]);
-                
-                // Increment for next time
+
                 currentProjectIndex++;
-                
-            }, delay + 500));
+
+            }, 1500));
         }
 
         function startSkillsChat() {
@@ -902,7 +1039,7 @@
                             </div>
                             <div>
                                 <h4 class="font-bold text-white text-sm">BSc in CSE</h4>
-                                <p class="text-xs text-gray-400 mt-1">Final Year at Southeast University (CGPA: 3.30).</p>
+                                <p class="text-xs text-gray-400 mt-1">Final Year at Southeast University.</p>
                             </div>
                         </div>
 
