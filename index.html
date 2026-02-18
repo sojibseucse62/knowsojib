@@ -272,6 +272,10 @@
                     <span class="w-2 h-2 rounded-full bg-red-500 group-hover:shadow-[0_0_8px_rgba(239,68,68,0.8)] transition-shadow"></span>
                     <span class="text-sm font-medium text-gray-300">Contact</span>
                 </button>
+                <button onclick="fillCommand('GitHub Activity')" class="flex items-center gap-2 bg-[#111111] hover:bg-[#222] border border-white/5 rounded-full px-4 py-2 transition-colors group flex-shrink-0">
+                    <span class="w-2 h-2 rounded-full bg-white group-hover:shadow-[0_0_8px_rgba(255,255,255,0.8)] transition-shadow"></span>
+                    <span class="text-sm font-medium text-gray-300">GitHub Activity</span>
+                </button>
 
             </div>
         </div>
@@ -347,6 +351,10 @@
                 startSkillsChat();
                 return;
             }
+            if(text === 'GitHub Activity') {
+                    startGithubChat();
+                    return;
+            }
             if(text === 'Contact') {
                 startContactChat();
                 return;
@@ -408,6 +416,16 @@
                 input.value = '';
                 input.blur();
                 return;
+            }
+            if(val.includes('github') || val.includes('git') || val.includes('code')) {
+                    startGithubChat();
+                    input.value = '';
+                    input.blur();
+                    return;
+            }
+            if(val.includes('github') || val.includes('git') || val.includes('code')) {
+                    startGithubChat();
+                    return;
             }
             if(val.includes('contact') || val.includes('mail')) {
                 startContactChat();
@@ -876,6 +894,72 @@
                     { text: "Close", onclick: "closeChat()", primary: false }
                 ]);
             }, 6000));
+        }
+
+        function startGithubChat() {
+            openModal();
+            addMessage('user', 'Show me your GitHub activity.');
+
+            chatTimeouts.push(setTimeout(() => showTyping(), 500));
+            chatTimeouts.push(setTimeout(() => {
+                removeTyping();
+                addMessage('bot', "I'm active on GitHub! Here is a visual overview of my contributions and recent activity:");
+            }, 1500));
+
+            // Display GitHub Profile Card with Charts
+            chatTimeouts.push(setTimeout(() => showTyping(), 2500));
+            chatTimeouts.push(setTimeout(() => {
+                removeTyping();
+                
+                const div = document.createElement('div');
+                div.className = 'flex w-full justify-start animate-message-pop';
+                
+                div.innerHTML = `
+                    <div class="relative max-w-[95%] md:max-w-[85%] px-5 py-4 rounded-2xl rounded-tl-none bg-[#222] border border-gray-700 shadow-sm flex flex-col gap-3 chat-bubble-bot">
+                        
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center text-white shrink-0">
+                                <i class="fa-brands fa-github text-2xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white text-base">@sojibseucse62</h4>
+                                <a href="https://github.com/sojibseucse62" target="_blank" class="text-xs text-brand-blue hover:underline">View Profile</a>
+                            </div>
+                        </div>
+
+                        <div class="w-full h-[1px] bg-gray-700 my-1"></div>
+
+                        <div class="bg-[#0d1117] p-3 rounded-xl border border-gray-800 overflow-hidden">
+                            <p class="text-[10px] text-gray-500 mb-2 font-bold uppercase tracking-wider">Contribution Calendar</p>
+                            <div class="overflow-x-auto no-scrollbar">
+                                <img src="https://ghchart.rshah.org/sojibseucse62" alt="GitHub Contributions" class="min-w-[300px] w-full h-auto opacity-90 hover:opacity-100 transition-opacity" />
+                            </div>
+                        </div>
+
+                        <div class="bg-[#0d1117] p-3 rounded-xl border border-gray-800 overflow-hidden">
+                            <p class="text-[10px] text-gray-500 mb-2 font-bold uppercase tracking-wider">Recent Activity</p>
+                            <img src="https://github-readme-activity-graph.vercel.app/graph?username=sojibseucse62&bg_color=00000000&color=9ca3af&line=10b981&point=34d399&area_color=10b981&area=true&hide_border=true&custom_title=&height=280&radius=6&days=15" alt="Activity Graph" class="w-full h-auto" />
+                        </div>
+
+                        <a href="https://github.com/sojibseucse62?tab=repositories" target="_blank" class="mt-2 block w-full bg-[#1a1a1a] border border-gray-700 hover:border-brand-blue text-white text-center py-3 rounded-xl font-medium text-sm transition-all group">
+                            Explore Repositories <i class="fa-solid fa-arrow-right ml-1 group-hover:translate-x-1 transition-transform text-brand-blue"></i>
+                        </a>
+                    </div>
+                `;
+                chatContent.appendChild(div);
+                scrollToBottom();
+
+            }, 3500));
+
+            // Follow-up Buttons
+            chatTimeouts.push(setTimeout(() => {
+                addChoiceButtons([
+                    { text: "See Projects", onclick: "startProjectsChat()", primary: true },
+                    { text: "Skills", onclick: "startSkillsChat()", primary: true },
+                    { text: "Contact", onclick: "fillCommand('Contact')", primary: false },
+                    { text: "Close", onclick: "closeChat()", primary: false }
+                ]);
+            }, 4000));
         }
 
         function startAgeChat() {
